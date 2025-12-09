@@ -7,6 +7,8 @@
 // Execute `rustlings hint from_into` or use the `hint` watch subcommand for a
 // hint.
 
+use std::default;
+
 #[derive(Debug)]
 struct Person {
     name: String,
@@ -40,10 +42,41 @@ impl Default for Person {
 // If while parsing the age, something goes wrong, then return the default of
 // Person Otherwise, then return an instantiated Person object with the results
 
-// I AM NOT DONE
 
 impl From<&str> for Person {
     fn from(s: &str) -> Person {
+        // 1. 空字符串 → default
+        if s.is_empty() {
+            return Person::default();
+        }
+
+        // 2. 按逗号分割
+        let parts: Vec<&str> = s.split(',').collect();
+
+        // 3. 必须有且仅有 2 个部分
+        if parts.len() != 2 {
+            return Person::default();
+        }
+
+        let name = parts[0];
+        let age_str = parts[1];
+
+        // 4. 名字不能为空
+        if name.is_empty() {
+            return Person::default();
+        }
+
+        // 5. 年龄必须能 parse 成 usize
+        let age = match age_str.parse::<usize>() {
+            Ok(n) => n,
+            Err(_) => return Person::default(),
+        };
+
+        // 6. 返回有效 Person
+        Person {
+            name: name.to_string(),
+            age,
+        }
     }
 }
 
